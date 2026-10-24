@@ -1,0 +1,726 @@
+@import '../assets/vendor/scss/core.scss';
+@import '../assets/css/demo.css';
+@import 'boxicons/css/boxicons.min.css';
+
+/* ==========================================================================
+   PALETA DE COLORES INSTITUCIONAL Y SISTEMA DE DISEÑO MINIMALISTA
+   Azul principal: #003B92
+   Rojo principal: #FF0000
+   Negro texto:    #000000
+   Blanco fondo:   #FFFFFF
+   ========================================================================== */
+
+:root {
+    --primary-color: #003B92;
+    --primary-hover: #002A6A;
+    --primary-active: #001D4A;
+    --primary-subtle: rgba(0, 59, 146, 0.08);
+    --primary-subtle-border: rgba(0, 59, 146, 0.2);
+
+    --danger-color: #FF0000;
+    --danger-hover: #CC0000;
+    --danger-subtle: rgba(255, 0, 0, 0.08);
+    --danger-subtle-border: rgba(255, 0, 0, 0.25);
+
+    --bs-primary: #003B92;
+    --bs-primary-rgb: 0, 59, 146;
+    --bs-danger: #FF0000;
+    --bs-danger-rgb: 255, 0, 0;
+
+    /* Tema Claro (Minimalista) */
+    --bs-body-bg: #FFFFFF;
+    --bs-body-color: #000000;
+    --surface-card: #FFFFFF;
+    --surface-sidebar: #FFFFFF;
+    --surface-navbar: rgba(255, 255, 255, 0.92);
+    --surface-footer: #FFFFFF;
+    --border-clean: #E5E7EB;
+    --border-hover: #CBD5E1;
+    --text-main: #000000;
+    --text-muted: #4B5563;
+    --text-heading: #000000;
+    --input-bg: #FFFFFF;
+    --input-border: #D1D5DB;
+    --table-header-bg: #F9FAFB;
+    --table-row-hover: #F3F4F6;
+    --menu-active-bg: rgba(0, 59, 146, 0.08);
+    --menu-active-color: #003B92;
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --card-shadow-hover: 0 8px 24px rgba(0, 59, 146, 0.08);
+}
+
+[data-bs-theme="dark"] {
+    --primary-color: #003B92;
+    --primary-hover: #1059C7;
+    --primary-active: #2563EB;
+    --primary-subtle: rgba(0, 59, 146, 0.25);
+    --primary-subtle-border: rgba(0, 59, 146, 0.45);
+
+    --danger-color: #FF0000;
+    --danger-hover: #FF3333;
+    --danger-subtle: rgba(255, 0, 0, 0.2);
+    --danger-subtle-border: rgba(255, 0, 0, 0.4);
+
+    --bs-primary: #003B92;
+    --bs-primary-rgb: 0, 59, 146;
+    --bs-danger: #FF0000;
+    --bs-danger-rgb: 255, 0, 0;
+
+    /* Tema Oscuro (Minimalista, Profundo y Nítido) */
+    --bs-body-bg: #0B0F17;
+    --bs-body-color: #F3F4F6;
+    --surface-card: #111726;
+    --surface-sidebar: #0E1422;
+    --surface-navbar: rgba(14, 20, 34, 0.9);
+    --surface-footer: #0E1422;
+    --border-clean: #1F293D;
+    --border-hover: #2D3D59;
+    --text-main: #F9FAFB;
+    --text-muted: #9CA3AF;
+    --text-heading: #FFFFFF;
+    --input-bg: #151D2F;
+    --input-border: #26334D;
+    --table-header-bg: #151D2F;
+    --table-row-hover: rgba(255, 255, 255, 0.035);
+    --menu-active-bg: rgba(0, 59, 146, 0.35);
+    --menu-active-color: #60A5FA;
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   TIPOGRAFÍA Y BASES GLOBALES
+   ========================================================================== */
+
+body {
+    background-color: var(--bs-body-bg) !important;
+    color: var(--text-main) !important;
+    font-family: 'Public Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* ==========================================================================
+   CORRECCIÓN Y RENDERIZADO DE ICONOS BOXICONS
+   ========================================================================== */
+
+.bx {
+    font-family: 'boxicons' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-variant: normal;
+    line-height: 1;
+    display: inline-block;
+    text-transform: none;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    vertical-align: middle;
+}
+
+.menu-icon.tf-icons.bx {
+    font-size: 1.25rem;
+    margin-right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+.menu-item:hover .menu-icon.tf-icons.bx {
+    transform: scale(1.12);
+    color: var(--primary-color);
+}
+
+/* ==========================================================================
+   ESTRUCTURA DE NAVEGACIÓN Y SIDEBAR (MINIMALISTA)
+   ========================================================================== */
+
+.layout-menu {
+    background-color: var(--surface-sidebar) !important;
+    border-right: 1px solid var(--border-clean) !important;
+    block-size: 100vh;
+    overflow: hidden;
+}
+
+.layout-menu .menu-inner {
+    block-size: calc(100vh - 5rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
+    scrollbar-width: thin;
+}
+
+.menu-divider {
+    border-bottom: 1px solid var(--border-clean);
+}
+
+.menu-header-text {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+.menu-item .menu-link {
+    color: var(--text-main);
+    border-radius: 0.5rem;
+    margin: 0.15rem 0.75rem;
+    padding: 0.55rem 0.85rem;
+    transition: all 0.18s ease;
+}
+
+.menu-item .menu-link:hover {
+    background-color: var(--menu-active-bg);
+    color: var(--primary-color);
+}
+
+.menu-item.active > .menu-link {
+    background-color: var(--primary-color) !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 59, 146, 0.28);
+}
+
+.menu-item.active > .menu-link .menu-icon {
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   NAVBAR SUPERIOR Y TOGGLE DE MODO OSCURO (MUY VISIBLE)
+   ========================================================================== */
+
+.layout-navbar {
+    background-color: var(--surface-navbar) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-clean) !important;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Botón llamativo tipo píldora para Modo Oscuro */
+.theme-switch-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 2rem;
+    background-color: var(--primary-subtle);
+    border: 1px solid var(--primary-subtle-border);
+    color: var(--primary-color);
+    font-size: 0.825rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+
+.theme-switch-pill:hover {
+    background-color: var(--primary-color);
+    color: #FFFFFF;
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 59, 146, 0.25);
+}
+
+.theme-switch-pill .theme-icon {
+    font-size: 1.15rem;
+    transition: transform 0.35s ease;
+}
+
+.theme-switch-pill:hover .theme-icon {
+    transform: rotate(20deg) scale(1.15);
+}
+
+[data-bs-theme="dark"] .theme-switch-pill {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: var(--border-clean);
+    color: #F9FAFB;
+}
+
+[data-bs-theme="dark"] .theme-switch-pill:hover {
+    background-color: #FFFFFF;
+    color: #000000;
+    border-color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================================================
+   TARJETAS Y CONTENEDORES (MINIMALISMO)
+   ========================================================================== */
+
+.card {
+    background-color: var(--surface-card) !important;
+    border: 1px solid var(--border-clean) !important;
+    border-radius: 0.85rem;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+}
+
+.card:hover {
+    border-color: var(--border-hover) !important;
+    box-shadow: var(--card-shadow-hover);
+}
+
+.card.card-interactive:hover {
+    transform: translateY(-3px);
+}
+
+.card-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--border-clean) !important;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Tarjeta de bienvenida */
+.dashboard-welcome {
+    background: linear-gradient(135deg, #003B92 0%, #082A66 100%) !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-welcome .btn-light {
+    background-color: #FFFFFF;
+    color: #003B92;
+    font-weight: 600;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.dashboard-welcome .btn-light:hover {
+    background-color: #F1F5F9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-illustration {
+    position: absolute;
+    right: 1.5rem;
+    bottom: -0.5rem;
+    font-size: 7rem;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   TABLAS MINIMALISTAS
+   ========================================================================== */
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-main);
+    --bs-table-border-color: var(--border-clean);
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: var(--table-header-bg);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border-clean);
+    padding: 0.9rem 1.25rem;
+}
+
+.table tbody td {
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--border-clean);
+    vertical-align: middle;
+}
+
+.table-hover tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--table-row-hover) !important;
+}
+
+/* ==========================================================================
+   BOTONES Y ACCIONES (PALETA #003B92 & #FF0000)
+   ========================================================================== */
+
+.btn {
+    border-radius: 0.55rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    padding: 0.5rem 1.15rem;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary {
+    background-color: #003B92 !important;
+    border-color: #003B92 !important;
+    color: #FFFFFF !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #002A6A !important;
+    border-color: #002A6A !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0, 59, 146, 0.3);
+}
+
+.btn-primary:active {
+    background-color: #001D4A !important;
+    border-color: #001D4A !important;
+    transform: translateY(0);
+}
+
+.btn-danger {
+    background-color: #FF0000 !important;
+    border-color: #FF0000 !important;
+    color: #FFFFFF !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: #CC0000 !important;
+    border-color: #CC0000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(255, 0, 0, 0.3);
+}
+
+.btn-outline-primary {
+    color: #003B92 !important;
+    border-color: #003B92 !important;
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: #003B92 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(0, 59, 146, 0.25);
+    transform: translateY(-1px);
+}
+
+.btn-outline-danger {
+    color: #FF0000 !important;
+    border-color: #FF0000 !important;
+    background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+    background-color: #FF0000 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25);
+    transform: translateY(-1px);
+}
+
+/* Botones de acción en tabla */
+.module-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.module-actions form {
+    margin: 0;
+}
+
+.module-actions .btn-icon {
+    display: inline-grid;
+    width: 2.15rem;
+    height: 2.15rem;
+    padding: 0;
+    place-items: center;
+    border-radius: 0.45rem;
+    font-size: 1.05rem;
+}
+
+/* ==========================================================================
+   FORMULARIOS E INPUTS
+   ========================================================================== */
+
+.form-label {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.form-control,
+.form-select {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-main);
+    border-radius: 0.55rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.9rem;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--input-bg);
+    border-color: #003B92;
+    color: var(--text-main);
+    box-shadow: 0 0 0 0.2rem rgba(0, 59, 146, 0.15);
+}
+
+.input-group-text {
+    background-color: var(--table-header-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-muted);
+    border-radius: 0.55rem;
+}
+
+/* ==========================================================================
+   BADGES MINIMALISTAS
+   ========================================================================== */
+
+.badge {
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+    border-radius: 0.4rem;
+    letter-spacing: -0.01em;
+}
+
+.badge.bg-label-primary {
+    background-color: var(--primary-subtle) !important;
+    color: var(--primary-color) !important;
+    border: 1px solid var(--primary-subtle-border);
+}
+
+[data-bs-theme="dark"] .badge.bg-label-primary {
+    color: #60A5FA !important;
+}
+
+.badge.bg-label-danger {
+    background-color: var(--danger-subtle) !important;
+    color: #FF0000 !important;
+    border: 1px solid var(--danger-subtle-border);
+}
+
+.badge.bg-label-success {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    color: #059669 !important;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+[data-bs-theme="dark"] .badge.bg-label-success {
+    color: #34D399 !important;
+}
+
+.badge.bg-label-info {
+    background-color: rgba(6, 182, 212, 0.1) !important;
+    color: #0891B2 !important;
+    border: 1px solid rgba(6, 182, 212, 0.25);
+}
+
+[data-bs-theme="dark"] .badge.bg-label-info {
+    color: #22D3EE !important;
+}
+
+.badge.bg-label-warning {
+    background-color: rgba(245, 158, 11, 0.1) !important;
+    color: #D97706 !important;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+[data-bs-theme="dark"] .badge.bg-label-warning {
+    color: #FBBF24 !important;
+}
+
+.badge.bg-label-secondary {
+    background-color: rgba(100, 116, 139, 0.1) !important;
+    color: #475569 !important;
+    border: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+[data-bs-theme="dark"] .badge.bg-label-secondary {
+    color: #94A3B8 !important;
+}
+
+/* ==========================================================================
+   MODALES Y DROPDOWNS
+   ========================================================================== */
+
+.modal-content {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-clean);
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-clean);
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-clean);
+    padding: 1rem 1.5rem;
+}
+
+.dropdown-menu {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-clean);
+    border-radius: 0.65rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.dropdown-item {
+    color: var(--text-main);
+    padding: 0.55rem 1rem;
+    border-radius: 0.4rem;
+    margin: 0.15rem 0.35rem;
+    width: auto;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--primary-subtle);
+    color: var(--primary-color);
+}
+
+.dropdown-divider {
+    border-top: 1px solid var(--border-clean);
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.content-footer {
+    background-color: var(--surface-footer) !important;
+    border-top: 1px solid var(--border-clean);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   PÁGINA DE LOGIN MINIMALISTA
+   ========================================================================== */
+
+.auth-page {
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--bs-body-bg);
+}
+
+.login-shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    background: radial-gradient(circle at 10% 20%, rgba(0, 59, 146, 0.04), transparent 35%), var(--bs-body-bg);
+    position: relative;
+}
+
+[data-bs-theme="dark"] .login-shell {
+    background: radial-gradient(circle at 10% 20%, rgba(0, 59, 146, 0.15), transparent 45%), #0B0F17;
+}
+
+.login-panel {
+    width: min(100%, 420px);
+    padding: 2.5rem;
+    background: var(--surface-card);
+    border: 1px solid var(--border-clean);
+    border-radius: 1.15rem;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+    animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-bs-theme="dark"] .login-panel {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.login-brand {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.login-brand img {
+    width: min(100%, 240px);
+    height: auto;
+}
+
+.login-heading {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.login-heading h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0.5rem 0 0.25rem;
+}
+
+.login-heading p,
+.login-footer {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.brand-logo {
+    display: block;
+    width: 178px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   ANIMACIONES Y TRANSICIONES SUAVES
+   ========================================================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content-wrapper {
+    animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Transiciones de tema */
+body,
+.layout-page,
+.layout-menu,
+.layout-navbar,
+.card,
+.modal-content,
+.dropdown-menu,
+.table,
+.table thead th,
+.table tbody td,
+.form-control,
+.form-select,
+.content-footer {
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease, box-shadow 0.25s ease;
+}
+
+/* Tooltips e indicadores */
+.avatar-initial {
+    background-color: var(--primary-color) !important;
+    color: #FFFFFF !important;
+    font-weight: 600;
+}

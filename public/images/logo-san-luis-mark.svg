@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="San Luis">
+  <rect width="128" height="128" rx="18" fill="#fff"/>
+  <g fill="none" stroke="#1451b8" stroke-width="7">
+    <path d="M16 101 64 20l48 81"/>
+    <path d="M35 101 64 53l29 48"/>
+    <path d="M51 101 64 78l13 23"/>
+    <path d="M8 101h112"/>
+  </g>
+  <path d="M60 93h8v18h-8z" fill="#ef5b25"/>
+  <path d="M64 72c-10 10-7 18 0 24 7-7 10-15 0-24z" fill="#f59e0b"/>
+</svg>

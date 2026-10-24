@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 116" role="img" aria-labelledby="title desc">
+  <title id="title">San Luis Instituto de Educacion Superior Tecnologico Privado</title>
+  <desc id="desc">Logotipo institucional San Luis</desc>
+  <g transform="translate(8 8)" fill="none" stroke="#1451b8" stroke-width="7">
+    <path d="M48 92 104 8l56 84"/>
+    <path d="M70 92 104 42l34 50"/>
+    <path d="M88 92 104 68l16 24"/>
+    <path d="M24 92h160"/>
+  </g>
+  <path d="M101 78h6v17h-6z" fill="#ef5b25"/>
+  <path d="M104 58c-8 9-6 16 0 21 6-6 8-13 0-21z" fill="#f59e0b"/>
+  <text x="205" y="45" fill="#ed120c" font-family="Arial, sans-serif" font-size="42" font-weight="700">SAN LUIS</text>
+  <text x="207" y="76" fill="#111" font-family="Arial, sans-serif" font-size="17" font-weight="700">INSTITUTO DE EDUCACION SUPERIOR</text>
+  <text x="207" y="98" fill="#111" font-family="Arial, sans-serif" font-size="17" font-weight="700">TECNOLOGICO PRIVADO</text>
+</svg>

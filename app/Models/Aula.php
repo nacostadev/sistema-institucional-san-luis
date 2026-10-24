@@ -9,9 +9,9 @@ class Aula extends Model
     protected $table = 'aula';
     protected $primaryKey = 'id_aula';
     public $timestamps = false;
-    protected $fillable = ['nombre_aula', 'tipo', 'capacidad', 'estado'];
+    protected $fillable = ['nombre', 'tipo', 'capacidad', 'estado'];
     public function horarios()
     {
-        return $this->hasMany(HorarioProgramacion::class, 'aula_id', 'id_aula');
+        return $this->hasMany(Horario::class, 'aula_id', 'id_aula');
     }
 }

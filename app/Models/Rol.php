@@ -9,13 +9,23 @@ class Rol extends Model
     protected $table = 'rol';
     protected $primaryKey = 'id_rol';
     public $timestamps = false;
-    protected $fillable = ['nombre_rol', 'descripcion', 'estado'];
+    protected $fillable = ['codigo', 'descripcion', 'estado'];
+
+    protected function getNombreRolAttribute(): string
+    {
+        return match (strtoupper((string) $this->codigo)) {
+            'ADMIN', 'ADMINISTRADOR' => 'Administrador',
+            'COORDINADOR' => 'Coordinador',
+            'DOCENTE' => 'Docente',
+            'ALUMNO', 'ESTUDIANTE' => 'Alumno',
+            default => $this->descripcion ?: (string) $this->codigo,
+        };
+    }
+
     public function usuarios()
     {
-        return $this->hasMany(User::class, 'rol_id', 'id_rol');
-    }
-    public function permisos()
-    {
-        return $this->hasMany(RolVistaPermiso::class, 'rol_id', 'id_rol');
+        return $this->belongsToMany(User::class, 'usuario_rol', 'rol_id', 'usuario_id')
+            ->wherePivot('estado', 'activo')
+            ->withPivot(['id_usuario_rol', 'asignado_en', 'estado']);
     }
 }

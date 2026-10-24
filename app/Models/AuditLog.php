@@ -7,25 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 class AuditLog extends Model
 {
     protected $table = 'audit_logs';
-    protected $primaryKey = 'id_audit';
+    protected $primaryKey = 'id_log';
     public $timestamps = false;
 
     protected $fillable = [
-        'usuario_id',
-        'tabla_afectada',
+        'creado_en',
+        'actor_usuario_id',
+        'ip_origen',
+        'tabla',
         'registro_id',
         'accion',
-        'datos_anteriores',
-        'datos_nuevos',
-        'ip_origen',
+        'valores_anteriores',
+        'valores_nuevos',
     ];
 
     protected function casts(): array
     {
         return [
-            'datos_anteriores' => 'array',
-            'datos_nuevos' => 'array',
-            'fecha_evento' => 'datetime',
+            'creado_en' => 'datetime',
+            'valores_anteriores' => 'array',
+            'valores_nuevos' => 'array',
         ];
+    }
+
+    public function actor()
+    {
+        return $this->belongsTo(User::class, 'actor_usuario_id', 'id_usuario');
     }
 }

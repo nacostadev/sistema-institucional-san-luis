@@ -6,144 +6,136 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Models\Asistencia;
 use App\Models\Aula;
+use App\Models\CargoAdicional;
 use App\Models\Costo;
 use App\Models\Curso;
 use App\Models\Docente;
+use App\Models\DocenteHabilitacion;
 use App\Models\Estudiante;
 use App\Models\Evaluacion;
-use App\Models\HorarioProgramacion;
+use App\Models\Horario;
 use App\Models\Matricula;
 use App\Models\Nota;
 use App\Models\Pago;
+use App\Models\Periodo;
+use App\Models\Programa;
 use App\Models\Rol;
-use App\Models\RolVistaPermiso;
 use App\Models\Seccion;
-use App\Models\SesionClase;
 use App\Models\User;
-use App\Models\Vista;
+use App\Models\UsuarioRol;
 
 class ModuleController extends Controller
 {
     private const MODEL_MAP = [
         'rol' => Rol::class,
         'usuario' => User::class,
-        'rol_vista_permiso' => RolVistaPermiso::class,
         'docente' => Docente::class,
         'estudiante' => Estudiante::class,
-        'costos' => Costo::class,
+        'costo' => Costo::class,
         'curso' => Curso::class,
         'aula' => Aula::class,
         'seccion' => Seccion::class,
-        'horario_programacion' => HorarioProgramacion::class,
+        'horario' => Horario::class,
         'matricula' => Matricula::class,
         'evaluacion' => Evaluacion::class,
         'nota' => Nota::class,
-        'sesion_clase' => SesionClase::class,
-        'asistencia' => Asistencia::class,
         'pago' => Pago::class,
-        'vista' => Vista::class,
+        'cargo_adicional' => CargoAdicional::class,
+        'periodo' => Periodo::class,
+        'programa' => Programa::class,
+        'docente_habilitacion' => DocenteHabilitacion::class,
+        'usuario_rol' => UsuarioRol::class,
     ];
 
     private const MODULES = [
         'roles' => ['table' => 'rol', 'key' => 'id_rol', 'fields' => [
-            ['name' => 'nombre_rol', 'label' => 'Nombre del rol'],
+            ['name' => 'codigo', 'label' => 'Código del rol'],
             ['name' => 'descripcion', 'label' => 'Descripcion', 'type' => 'textarea'],
             ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
         ]],
         'usuarios' => ['table' => 'usuario', 'key' => 'id_usuario', 'fields' => [
-            ['name' => 'rol_id', 'label' => 'Rol', 'type' => 'relation', 'table' => 'rol', 'value' => 'id_rol', 'display' => 'nombre_rol'],
             ['name' => 'nombre_usuario', 'label' => 'Nombre de usuario'],
+            ['name' => 'dni', 'label' => 'DNI'],
             ['name' => 'correo', 'label' => 'Correo'],
-            ['name' => 'clave', 'label' => 'Clave', 'type' => 'password'],
+            ['name' => 'nombres', 'label' => 'Nombres'],
+            ['name' => 'apellidos', 'label' => 'Apellidos'],
+            ['name' => 'telefono', 'label' => 'Teléfono'],
+            ['name' => 'password', 'label' => 'Contraseña', 'type' => 'password'],
             ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
         ]],
-        'permisos' => ['table' => 'rol_vista_permiso', 'key' => 'id_permiso', 'fields' => [
-            ['name' => 'rol_id', 'label' => 'Rol', 'type' => 'relation', 'table' => 'rol', 'value' => 'id_rol', 'display' => 'nombre_rol'],
-            ['name' => 'vista_id', 'label' => 'Vista', 'type' => 'relation', 'table' => 'vista', 'value' => 'id_vista', 'display' => 'nombre_vista'],
-            ['name' => 'puede_crear', 'label' => 'Puede crear', 'type' => 'checkbox'],
-            ['name' => 'puede_editar', 'label' => 'Puede editar', 'type' => 'checkbox'],
-            ['name' => 'puede_eliminar', 'label' => 'Puede eliminar', 'type' => 'checkbox'],
-        ]],
         'docentes' => ['table' => 'docente', 'key' => 'id_docente', 'fields' => [
-            ['name' => 'dni', 'label' => 'DNI'],
-            ['name' => 'nombre_completo', 'label' => 'Nombre completo'],
+            ['name' => 'usuario_id', 'label' => 'Usuario', 'type' => 'relation', 'table' => 'usuario', 'value' => 'id_usuario', 'display' => 'nombre_usuario'],
             ['name' => 'especialidad', 'label' => 'Especialidad'],
-            ['name' => 'telefono', 'label' => 'Telefono'],
             ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
         ]],
         'estudiantes' => ['table' => 'estudiante', 'key' => 'id_estudiante', 'fields' => [
-            ['name' => 'dni', 'label' => 'DNI'],
-            ['name' => 'nombre_completo', 'label' => 'Nombre completo'],
-            ['name' => 'telefono', 'label' => 'Telefono'],
+            ['name' => 'usuario_id', 'label' => 'Usuario', 'type' => 'relation', 'table' => 'usuario', 'value' => 'id_usuario', 'display' => 'nombre_usuario'],
+            ['name' => 'codigo_estudiante', 'label' => 'Código de estudiante'],
             ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
         ]],
-        'costos' => ['table' => 'costos', 'key' => 'id_costo', 'fields' => [
-            ['name' => 'nombre_costo', 'label' => 'Categoria tarifaria'],
+        'costos' => ['table' => 'costo', 'key' => 'id_costo', 'fields' => [
+            ['name' => 'nombre_concepto', 'label' => 'Concepto'],
+            ['name' => 'categoria', 'label' => 'Categoría', 'type' => 'select', 'options' => ['curso', 'pension', 'tramite', 'otro']],
             ['name' => 'monto', 'label' => 'Monto', 'type' => 'number'],
-            ['name' => 'descripcion', 'label' => 'Descripcion', 'type' => 'textarea'],
             ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
         ]],
         'cursos' => ['table' => 'curso', 'key' => 'id_curso', 'fields' => [
-            ['name' => 'costo_id', 'label' => 'Tarifa educativa asociada', 'type' => 'relation', 'table' => 'costos', 'value' => 'id_costo', 'display' => 'nombre_costo'],
+            ['name' => 'programa_id', 'label' => 'Programa', 'type' => 'relation', 'table' => 'programa', 'value' => 'id_programa', 'display' => 'nombre'],
+            ['name' => 'costo_id', 'label' => 'Costo asociado', 'type' => 'relation', 'table' => 'costo', 'value' => 'id_costo', 'display' => 'nombre_concepto'],
             ['name' => 'nombre', 'label' => 'Nombre del curso'],
             ['name' => 'descripcion', 'label' => 'Descripcion', 'type' => 'textarea'],
             ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
         ]],
         'aulas' => ['table' => 'aula', 'key' => 'id_aula', 'fields' => [
-            ['name' => 'nombre_aula', 'label' => 'Nombre del aula'],
+            ['name' => 'nombre', 'label' => 'Nombre del aula'],
             ['name' => 'tipo', 'label' => 'Tipo', 'type' => 'select', 'options' => ['fisica', 'virtual']],
             ['name' => 'capacidad', 'label' => 'Capacidad', 'type' => 'number'],
             ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
         ]],
         'secciones' => ['table' => 'seccion', 'key' => 'id_seccion', 'fields' => [
             ['name' => 'curso_id', 'label' => 'Curso', 'type' => 'relation', 'table' => 'curso', 'value' => 'id_curso', 'display' => 'nombre'],
+            ['name' => 'periodo_id', 'label' => 'Periodo', 'type' => 'relation', 'table' => 'periodo', 'value' => 'id_periodo', 'display' => 'codigo'],
             ['name' => 'docente_id', 'label' => 'Docente responsable', 'type' => 'relation', 'table' => 'docente', 'value' => 'id_docente', 'display' => 'nombre_completo'],
-            ['name' => 'nombre_seccion', 'label' => 'Seccion'],
-            ['name' => 'periodo_lectivo', 'label' => 'Periodo lectivo'],
-            ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
+            ['name' => 'nombre', 'label' => 'Sección'],
+            ['name' => 'cupo_maximo', 'label' => 'Cupo máximo', 'type' => 'number'],
+            ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['planificada', 'abierta', 'cerrada', 'cancelada']],
         ]],
-        'horarios' => ['table' => 'horario_programacion', 'key' => 'id_horario', 'fields' => [
-            ['name' => 'seccion_id', 'label' => 'Seccion', 'type' => 'relation', 'table' => 'seccion', 'value' => 'id_seccion', 'display' => 'nombre_seccion'],
-            ['name' => 'aula_id', 'label' => 'Aula', 'type' => 'relation', 'table' => 'aula', 'value' => 'id_aula', 'display' => 'nombre_aula'],
-            ['name' => 'dia_semana', 'label' => 'Dia', 'type' => 'select', 'options' => ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']],
+        'horarios' => ['table' => 'horario', 'key' => 'id_horario', 'fields' => [
+            ['name' => 'seccion_id', 'label' => 'Sección', 'type' => 'relation', 'table' => 'seccion', 'value' => 'id_seccion', 'display' => 'nombre'],
+            ['name' => 'aula_id', 'label' => 'Aula', 'type' => 'relation', 'table' => 'aula', 'value' => 'id_aula', 'display' => 'nombre'],
+            ['name' => 'dia_semana', 'label' => 'Día de semana', 'type' => 'number'],
             ['name' => 'hora_inicio', 'label' => 'Hora de inicio', 'type' => 'time'],
             ['name' => 'hora_fin', 'label' => 'Hora de fin', 'type' => 'time'],
+            ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activo', 'inactivo']],
         ]],
         'matriculas' => ['table' => 'matricula', 'key' => 'id_matricula', 'fields' => [
             ['name' => 'estudiante_id', 'label' => 'Estudiante', 'type' => 'relation', 'table' => 'estudiante', 'value' => 'id_estudiante', 'display' => 'nombre_completo'],
-            ['name' => 'seccion_id', 'label' => 'Seccion', 'type' => 'relation', 'table' => 'seccion', 'value' => 'id_seccion', 'display' => 'nombre_seccion'],
+            ['name' => 'seccion_id', 'label' => 'Sección', 'type' => 'relation', 'table' => 'seccion', 'value' => 'id_seccion', 'display' => 'nombre'],
             ['name' => 'fecha_matricula', 'label' => 'Fecha de matrícula', 'type' => 'date'],
-            ['name' => 'estado_matricula', 'label' => 'Estado', 'type' => 'select', 'options' => ['matriculado', 'retirado', 'finalizado', 'inhabilitado'], 'hidden_create' => true],
+            ['name' => 'precio_aplicado', 'label' => 'Precio aplicado', 'type' => 'number'],
+            ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['formalizada', 'retirada', 'anulada']],
         ]],
         'evaluaciones' => ['table' => 'evaluacion', 'key' => 'id_evaluacion', 'fields' => [
-            ['name' => 'seccion_id', 'label' => 'Seccion', 'type' => 'relation', 'table' => 'seccion', 'value' => 'id_seccion', 'display' => 'nombre_seccion'],
-            ['name' => 'nombre_evaluacion', 'label' => 'Nombre'],
-            ['name' => 'peso_porcentaje', 'label' => 'Peso porcentual', 'type' => 'number'],
+            ['name' => 'seccion_id', 'label' => 'Sección', 'type' => 'relation', 'table' => 'seccion', 'value' => 'id_seccion', 'display' => 'nombre'],
+            ['name' => 'titulo', 'label' => 'Título'],
+            ['name' => 'ponderacion', 'label' => 'Ponderación', 'type' => 'number'],
+            ['name' => 'fecha_evaluacion', 'label' => 'Fecha', 'type' => 'date'],
+            ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['activa', 'anulada']],
         ]],
         'notas' => ['table' => 'nota', 'key' => 'id_nota', 'fields' => [
-            ['name' => 'evaluacion_id', 'label' => 'Evaluacion', 'type' => 'relation', 'table' => 'evaluacion', 'value' => 'id_evaluacion', 'display' => 'nombre_evaluacion'],
+            ['name' => 'evaluacion_id', 'label' => 'Evaluación', 'type' => 'relation', 'table' => 'evaluacion', 'value' => 'id_evaluacion', 'display' => 'titulo'],
             ['name' => 'matricula_id', 'label' => 'Matricula', 'type' => 'relation', 'table' => 'matricula', 'value' => 'id_matricula', 'display' => 'id_matricula'],
             ['name' => 'calificacion', 'label' => 'Calificacion', 'type' => 'number'],
         ]],
-        'sesiones' => ['table' => 'sesion_clase', 'key' => 'id_sesion', 'fields' => [
-            ['name' => 'seccion_id', 'label' => 'Seccion', 'type' => 'relation', 'table' => 'seccion', 'value' => 'id_seccion', 'display' => 'nombre_seccion'],
-            ['name' => 'fecha', 'label' => 'Fecha', 'type' => 'date'],
-            ['name' => 'tema', 'label' => 'Tema', 'type' => 'textarea'],
-        ]],
-        'asistencia' => ['table' => 'asistencia', 'key' => 'id_asistencia', 'fields' => [
-            ['name' => 'sesion_id', 'label' => 'Sesion', 'type' => 'relation', 'table' => 'sesion_clase', 'value' => 'id_sesion', 'display' => 'id_sesion'],
-            ['name' => 'matricula_id', 'label' => 'Matricula', 'type' => 'relation', 'table' => 'matricula', 'value' => 'id_matricula', 'display' => 'id_matricula'],
-            ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['presente', 'falta', 'tardanza', 'justificado']],
-        ]],
         'pagos' => ['table' => 'pago', 'key' => 'id_pago', 'fields' => [
             ['name' => 'matricula_id', 'label' => 'Matrícula del estudiante', 'type' => 'relation', 'table' => 'matricula', 'value' => 'id_matricula', 'display' => 'display_label'],
-            ['name' => 'costo_id', 'label' => 'Categoria de costo', 'type' => 'relation', 'table' => 'costos', 'value' => 'id_costo', 'display' => 'nombre_costo'],
-            ['name' => 'monto_pagado', 'label' => 'Monto pagado', 'type' => 'number'],
+            ['name' => 'cargo_id', 'label' => 'Cargo', 'type' => 'relation', 'table' => 'cargo_adicional', 'value' => 'id_cargo', 'display' => 'referencia_interna'],
+            ['name' => 'monto', 'label' => 'Monto', 'type' => 'number'],
             ['name' => 'fecha_pago', 'label' => 'Fecha de pago', 'type' => 'datetime-local'],
-            ['name' => 'metodo_pago', 'label' => 'Metodo', 'type' => 'select', 'options' => ['efectivo', 'tarjeta', 'transferencia', 'yape_plin']],
-            ['name' => 'nro_comprobante', 'label' => 'Nro. comprobante'],
+            ['name' => 'serie_comprobante', 'label' => 'Serie'],
+            ['name' => 'numero_comprobante', 'label' => 'Número de comprobante'],
+            ['name' => 'estado', 'label' => 'Estado', 'type' => 'select', 'options' => ['pendiente', 'validado', 'anulado']],
         ]],
     ];
 
@@ -165,15 +157,12 @@ class ModuleController extends Controller
             $buscar = request('buscar');
             $searchField = match ($module) {
                 'cursos' => 'nombre',
-                'estudiantes' => 'nombre_completo',
-                'docentes' => 'nombre_completo',
-                'secciones' => 'nombre_seccion',
-                'evaluaciones' => 'nombre_evaluacion',
-                'sesiones' => 'tema',
+                'secciones' => 'nombre',
+                'evaluaciones' => 'titulo',
                 default => null,
             };
             if ($searchField) {
-                $query->whereRaw("{$searchField} LIKE '%" . $buscar . "%'");
+                $query->where($searchField, 'like', '%' . $buscar . '%');
             }
         }
 
@@ -184,7 +173,6 @@ class ModuleController extends Controller
             $query = match ($module) {
                 'matriculas' => $query->where('estudiante_id', $idAlumno),
                 'notas' => $query->whereHas('matricula', fn($q) => $q->where('estudiante_id', $idAlumno)),
-                'asistencia' => $query->whereHas('matricula', fn($q) => $q->where('estudiante_id', $idAlumno)),
                 'cursos' => $query->whereIn('id_curso', Seccion::whereIn('id_seccion', Matricula::where('estudiante_id', $idAlumno)->pluck('seccion_id'))->pluck('curso_id')),
                 'estudiantes' => $query->where('id_estudiante', $idAlumno),
                 default => $query,
@@ -222,8 +210,8 @@ class ModuleController extends Controller
         $this->authorizeModule($module, 'create');
         $definition = self::MODULES[$module];
 
-        if (in_array($module, ['estudiantes', 'docentes'], true)) {
-            return $this->storeProfile($request, $module);
+        if ($module === 'usuarios') {
+            $request->validate(['password' => ['required', 'string', 'min:12']]);
         }
 
         $model = $this->modelForTable($definition['table']);
@@ -233,7 +221,7 @@ class ModuleController extends Controller
             $payload = $this->applyDefaults($payload, $module);
 
             if ($module === 'notas' && isset($payload['calificacion'])) {
-                $payload['calificacion'] = max(0, min(20, (int) round((float) $payload['calificacion'])));
+                $payload['calificacion'] = max(0, min(20, (float) $payload['calificacion']));
             }
 
             DB::transaction(fn () => $model->newQuery()->create($payload));
@@ -250,14 +238,23 @@ class ModuleController extends Controller
         $definition = self::MODULES[$module];
         $model = $this->modelForTable($definition['table']);
 
+        if ($module === 'usuarios' && $request->filled('password')) {
+            $request->validate(['password' => ['string', 'min:12']]);
+        }
+
         try {
             $record = $model->newQuery()->where($definition['key'], $id)->firstOrFail();
 
             // [VULNERABILIDAD 4: Mala estructura MVC] Captura directa con $request->all() sin FormRequest
             $payload = $request->all();
+            if ($module === 'usuarios') {
+                if (! $request->filled('password')) {
+                    unset($payload['password']);
+                }
+            }
 
             if ($module === 'notas' && isset($payload['calificacion'])) {
-                $payload['calificacion'] = max(0, min(20, (int) round((float) $payload['calificacion'])));
+                $payload['calificacion'] = max(0, min(20, (float) $payload['calificacion']));
             }
 
             DB::transaction(fn () => $record->update($payload));
@@ -291,12 +288,9 @@ class ModuleController extends Controller
         // [VULNERABILIDAD 2: IDOR en operaciones] El servidor no valida si el registro específico pertenece al usuario que envía la petición
         $record = $model->newQuery()->where($definition['key'], $id)->firstOrFail();
         $hasState = collect($definition['fields'])->contains('name', 'estado');
-        $hasCourseState = collect($definition['fields'])->contains('name', 'estado_matricula');
-        DB::transaction(function () use ($record, $hasState, $hasCourseState): void {
+        DB::transaction(function () use ($record, $hasState, $module): void {
             if ($hasState) {
-                $record->update(['estado' => 'inactivo']);
-            } elseif ($hasCourseState) {
-                $record->update(['estado_matricula' => 'inhabilitado']);
+                $record->update(['estado' => $module === 'matriculas' ? 'anulada' : 'inactivo']);
             } else {
                 $record->delete();
             }
@@ -320,10 +314,8 @@ class ModuleController extends Controller
                 'horarios' => $query->whereIn('seccion_id', $seccionIds),
                 'estudiantes' => $query->whereHas('matriculas', fn($q) => $q->whereIn('seccion_id', $seccionIds)),
                 'evaluaciones' => $query->whereIn('seccion_id', $seccionIds),
-                'sesiones' => $query->whereIn('seccion_id', $seccionIds),
                 'matriculas' => $query->whereIn('seccion_id', $seccionIds),
                 'notas' => $query->whereHas('evaluacion', fn($q) => $q->whereIn('seccion_id', $seccionIds)),
-                'asistencia' => $query->whereHas('sesion', fn($q) => $q->whereIn('seccion_id', $seccionIds)),
                 default => $query,
             };
         }
@@ -344,9 +336,7 @@ class ModuleController extends Controller
                 'secciones' => $query->whereIn('id_seccion', $seccionIds),
                 'horarios' => $query->whereIn('seccion_id', $seccionIds),
                 'evaluaciones' => $query->whereIn('seccion_id', $seccionIds),
-                'sesiones' => $query->whereIn('seccion_id', $seccionIds),
                 'notas' => $query->whereIn('matricula_id', $matriculaIds),
-                'asistencia' => $query->whereIn('matricula_id', $matriculaIds),
                 default => $query,
             };
         }
@@ -361,7 +351,7 @@ class ModuleController extends Controller
         }
 
         if ($role === 'Coordinador') {
-            $readOnly = ['roles', 'usuarios', 'permisos', 'costos', 'pagos'];
+            $readOnly = ['roles', 'usuarios', 'costos', 'pagos'];
             $isReadOnly = in_array($module, $readOnly, true);
             return [
                 'canCreate' => !$isReadOnly,
@@ -371,7 +361,7 @@ class ModuleController extends Controller
         }
 
         if ($role === 'Docente') {
-            $canManage = in_array($module, ['evaluaciones', 'notas', 'sesiones', 'asistencia'], true);
+            $canManage = in_array($module, ['evaluaciones', 'notas'], true);
             return [
                 'canCreate' => $canManage,
                 'canEdit' => $canManage,
@@ -406,8 +396,6 @@ class ModuleController extends Controller
                 'estudiantes' => ['title' => 'Mis Estudiantes', 'subtitle' => 'Alumnos matriculados en tus secciones'],
                 'evaluaciones' => ['title' => 'Evaluaciones de Mis Cursos', 'subtitle' => 'Gestión de evaluaciones y pesos porcentuales'],
                 'notas' => ['title' => 'Registro de Calificaciones', 'subtitle' => 'Notas registradas para tus alumnos'],
-                'sesiones' => ['title' => 'Sesiones de Clase', 'subtitle' => 'Bitácora y temas de clase desarrollados'],
-                'asistencia' => ['title' => 'Control de Asistencia', 'subtitle' => 'Registro de asistencia de tus alumnos'],
                 default => ['title' => $baseTitle, 'subtitle' => "Registros de {$baseTitle}"],
             };
         }
@@ -419,8 +407,6 @@ class ModuleController extends Controller
                 'horarios' => ['title' => 'Mi Horario Semanal', 'subtitle' => 'Horarios y aulas de tus cursos matriculados'],
                 'evaluaciones' => ['title' => 'Mis Evaluaciones Programadas', 'subtitle' => 'Evaluaciones de tus cursos matriculados'],
                 'notas' => ['title' => 'Mis Calificaciones', 'subtitle' => 'Notas obtenidas en tus cursos'],
-                'sesiones' => ['title' => 'Sesiones de Mis Cursos', 'subtitle' => 'Fechas y temas tratados en tus clases'],
-                'asistencia' => ['title' => 'Mi Registro de Asistencia', 'subtitle' => 'Asistencias y tardanzas registradas'],
                 default => ['title' => $baseTitle, 'subtitle' => "Registros de {$baseTitle}"],
             };
         }
@@ -449,8 +435,6 @@ class ModuleController extends Controller
                         $query->whereIn('id_seccion', $docenteSeccionIds);
                     } elseif ($field['name'] === 'evaluacion_id') {
                         $query->whereIn('seccion_id', $docenteSeccionIds);
-                    } elseif ($field['name'] === 'sesion_id') {
-                        $query->whereIn('seccion_id', $docenteSeccionIds);
                     } elseif ($field['name'] === 'matricula_id') {
                         $query->whereIn('seccion_id', $docenteSeccionIds);
                     }
@@ -463,18 +447,18 @@ class ModuleController extends Controller
                             'Matrícula #%s - %s (%s)',
                             $item->id_matricula,
                             $item->estudiante?->nombre_completo ?? 'Estudiante',
-                            $item->seccion?->nombre_seccion ?? 'Sección'
+                            $item->seccion?->nombre ?? 'Sección'
                         );
                     });
                 }
-                if ($field['table'] === 'costos') {
+                if ($field['table'] === 'costo') {
                     $relations[$field['name']]->each(function ($item) {
-                        $item->display_label = sprintf('Tarifa: %s | S/ %s', $item->nombre_costo, number_format((float) $item->monto, 2));
+                        $item->display_label = sprintf('%s | S/ %s', $item->nombre_concepto, number_format((float) $item->monto, 2));
                     });
                 }
                 if ($field['table'] === 'seccion') {
                     $relations[$field['name']]->each(function ($item) {
-                        $item->display_label = sprintf('%s | %s (Periodo %s)', $item->nombre_seccion, $item->curso?->nombre ?? 'Curso', $item->periodo_lectivo);
+                        $item->display_label = sprintf('%s | %s (Periodo %s)', $item->nombre, $item->curso?->nombre ?? 'Curso', $item->periodo?->codigo ?? '—');
                     });
                 }
             }
@@ -489,49 +473,28 @@ class ModuleController extends Controller
 
     private function applyDefaults(array $payload, string $module): array
     {
-        if (in_array($module, ['roles', 'usuarios', 'docentes', 'estudiantes', 'costos', 'cursos', 'aulas', 'secciones'], true)) {
-            $payload['estado'] = $payload['estado'] ?? 'activo';
-        }
+        $payload['estado'] ??= match ($module) {
+            'roles', 'usuarios', 'docentes', 'estudiantes', 'costos', 'cursos', 'aulas', 'horarios' => 'activo',
+            'secciones' => 'planificada',
+            'evaluaciones' => 'activa',
+            'matriculas' => 'formalizada',
+            'pagos' => 'pendiente',
+            default => null,
+        };
         if ($module === 'matriculas') {
             $payload['fecha_matricula'] = $payload['fecha_matricula'] ?? now()->toDateString();
-            $payload['estado_matricula'] = $payload['estado_matricula'] ?? 'matriculado';
+            $payload['registrado_por'] = Auth::id();
         }
-        if ($module === 'asistencia') {
-            $payload['estado'] = $payload['estado'] ?? 'presente';
+        if ($module === 'notas') {
+            $payload['registrada_por'] = Auth::id();
+            if (isset($payload['evaluacion_id'])) {
+                $payload['seccion_id'] = Evaluacion::whereKey($payload['evaluacion_id'])->value('seccion_id');
+            }
+        }
+        if ($module === 'pagos') {
+            $payload['registrado_por'] = Auth::id();
         }
         return $payload;
-    }
-
-    private function storeProfile(Request $request, string $module)
-    {
-        return DB::transaction(function () use ($request, $module) {
-            // [VULNERABILIDAD 4: Sin FormRequest] Captura directa de datos
-            $data = $request->all();
-            $roleName = $module === 'estudiantes' ? 'Alumno' : 'Docente';
-            $role = Rol::where('nombre_rol', $roleName)->firstOrFail();
-            $parts = preg_split('/\s+/', trim($data['nombre_completo'] ?? 'usuario nuevo'));
-            $username = strtolower(($parts[0] ?? 'usuario') . '.' . ($parts[1] ?? 'nuevo'));
-            $username = preg_replace('/[^a-z0-9.]/', '', Str::ascii($username));
-            $baseUsername = $username;
-            $counter = 1;
-            while (User::where('nombre_usuario', $username)->exists()) {
-                $username = $baseUsername . $counter++;
-            }
-            // [VULNERABILIDAD 5 & 6: Clave en texto plano "123" y sin complejidad]
-            $user = User::create([
-                'rol_id' => $role->id_rol,
-                'nombre_usuario' => $username,
-                'correo' => $username . '@instituto.edu.pe',
-                'clave' => '123',
-                'estado' => 'activo',
-            ]);
-            $data['usuario_id'] = $user->id_usuario;
-            $data['estado'] = 'activo';
-            $profile = $module === 'estudiantes' ? Estudiante::class : Docente::class;
-            $profile::create($data);
-
-            return back()->with('message', "Registro creado. Usuario: {$username} | Clave inicial: 123");
-        });
     }
 
     private function authorizeModule(string $module, string $action = 'view'): void
@@ -539,9 +502,9 @@ class ModuleController extends Controller
         $user = Auth::user();
         $role = $user?->rol?->nombre_rol;
 
-        $docenteAllowed = ['cursos', 'secciones', 'horarios', 'estudiantes', 'evaluaciones', 'notas', 'sesiones', 'asistencia'];
-        $alumnoAllowed = ['cursos', 'matriculas', 'horarios', 'evaluaciones', 'notas', 'sesiones', 'asistencia'];
-        $coordinatorAllowed = ['estudiantes', 'docentes', 'cursos', 'secciones', 'aulas', 'horarios', 'matriculas', 'evaluaciones', 'notas', 'sesiones', 'asistencia'];
+        $docenteAllowed = ['cursos', 'secciones', 'horarios', 'estudiantes', 'evaluaciones', 'notas'];
+        $alumnoAllowed = ['cursos', 'matriculas', 'horarios', 'evaluaciones', 'notas'];
+        $coordinatorAllowed = ['estudiantes', 'docentes', 'cursos', 'secciones', 'aulas', 'horarios', 'matriculas', 'evaluaciones', 'notas'];
 
         $canView = match ($role) {
             'Administrador' => true,

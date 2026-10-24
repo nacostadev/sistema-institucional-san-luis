@@ -9,24 +9,19 @@ class AuditObserver
 {
     private const SENSITIVE_ATTRIBUTES = [
         'access_token',
+        'apellidos_cifrados',
         'api_token',
-        'clave',
+        'correo_cifrado',
+        'correo_hash',
+        'dni_cifrado',
+        'dni_hash',
+        'nombres_cifrados',
         'password',
         'password_confirmation',
+        'telefono_cifrado',
         'refresh_token',
         'remember_token',
     ];
-
-    public function creating(Model $model): void
-    {
-        $model->setAttribute('created_by', Auth::id());
-        $model->setAttribute('updated_by', Auth::id());
-    }
-
-    public function updating(Model $model): void
-    {
-        $model->setAttribute('updated_by', Auth::id());
-    }
 
     public function created(Model $model): void
     {
@@ -41,11 +36,6 @@ class AuditObserver
             $this->filterSensitiveAttributes($model->getRawOriginal()),
             $this->snapshot($model)
         );
-    }
-
-    public function deleted(Model $model): void
-    {
-        $this->record($model, 'DELETE', $this->snapshot($model), null);
     }
 
     private function snapshot(Model $model): array
@@ -69,15 +59,16 @@ class AuditObserver
     private function record(Model $model, string $action, ?array $before, ?array $after): void
     {
         $model->getConnection()->table('audit_logs')->insert([
-            'usuario_id' => Auth::id(),
-            'tabla_afectada' => $model->getTable(),
+            'creado_en' => now(),
+            'actor_usuario_id' => Auth::id(),
+            'tabla' => $model->getTable(),
             'registro_id' => $model->getKey(),
             'accion' => $action,
-            'datos_anteriores' => $before === null ? null : json_encode(
+            'valores_anteriores' => $before === null ? null : json_encode(
                 $before,
                 JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
             ),
-            'datos_nuevos' => $after === null ? null : json_encode(
+            'valores_nuevos' => $after === null ? null : json_encode(
                 $after,
                 JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
             ),

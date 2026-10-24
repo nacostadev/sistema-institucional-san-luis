@@ -28,7 +28,7 @@
                 <form method="POST" action="{{ route('modules.store', $module) }}">
                     @csrf
                     @foreach ($definition['fields'] as $field)
-                    @if (!($field['hidden_create'] ?? false) && !in_array($field['name'], ['estado', 'estado_matricula'], true))
+                    @if (!($field['hidden_create'] ?? false) && $field['name'] !== 'estado')
                     @php($type = $field['type'] ?? 'text')
                     <div class="mb-3">
                         @if ($type === 'checkbox')
@@ -55,7 +55,7 @@
                             @endforeach
                         </select>
                         @elseif ($field['name'] === 'calificacion')
-                        <input class="form-control" type="number" min="0" max="20" step="1" name="{{ $field['name'] }}" id="new-{{ $field['name'] }}" placeholder="0 a 20">
+                        <input class="form-control" type="number" min="0" max="20" step="0.01" name="{{ $field['name'] }}" id="new-{{ $field['name'] }}" placeholder="0 a 20">
                         @else
                         <input class="form-control" type="{{ $type }}" name="{{ $field['name'] }}" id="new-{{ $field['name'] }}" placeholder="Ingresa {{ strtolower($field['label']) }}">
                         @endif
@@ -215,7 +215,7 @@
                                 @endforeach
                             </select>
                             @elseif ($field['name'] === 'calificacion')
-                            <input class="form-control" type="number" min="0" max="20" step="1" name="{{ $field['name'] }}" value="{{ (int)$row->{$field['name']} }}" required>
+                            <input class="form-control" type="number" min="0" max="20" step="0.01" name="{{ $field['name'] }}" value="{{ $row->{$field['name']} }}" required>
                             @else
                             <input class="form-control" type="{{ $type }}" name="{{ $field['name'] }}" value="{{ $type === 'password' ? '' : $row->{$field['name']} }}">
                             @endif

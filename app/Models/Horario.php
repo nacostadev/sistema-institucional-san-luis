@@ -4,12 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HorarioProgramacion extends Model
+class Horario extends Model
 {
-    protected $table = 'horario_programacion';
+    protected $table = 'horario';
     protected $primaryKey = 'id_horario';
     public $timestamps = false;
-    protected $fillable = ['seccion_id', 'aula_id', 'dia_semana', 'hora_inicio', 'hora_fin'];
+    protected $fillable = ['seccion_id', 'aula_id', 'dia_semana', 'hora_inicio', 'hora_fin', 'estado'];
+
+    protected function casts(): array
+    {
+        return ['dia_semana' => 'integer'];
+    }
+
     public function seccion()
     {
         return $this->belongsTo(Seccion::class, 'seccion_id', 'id_seccion');

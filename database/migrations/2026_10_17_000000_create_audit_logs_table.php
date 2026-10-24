@@ -13,23 +13,15 @@ return new class extends Migration
         }
 
         Schema::create('audit_logs', function (Blueprint $table) {
-            $table->bigIncrements('id_audit');
-            $table->integer('usuario_id')->nullable();
-            $table->string('tabla_afectada', 100);
-            $table->bigInteger('registro_id');
-            $table->enum('accion', ['INSERT', 'UPDATE', 'DELETE']);
-            $table->json('datos_anteriores')->nullable();
-            $table->json('datos_nuevos')->nullable();
-            $table->timestamp('fecha_evento')->useCurrent();
+            $table->bigIncrements('id_log');
+            $table->dateTime('creado_en', 6)->useCurrent();
+            $table->unsignedBigInteger('actor_usuario_id')->nullable();
             $table->string('ip_origen', 45)->nullable();
-
-            if (Schema::hasTable('usuario')) {
-                $table->foreign('usuario_id', 'fk_audit_usuario')
-                    ->references('id_usuario')
-                    ->on('usuario')
-                    ->cascadeOnUpdate()
-                    ->nullOnDelete();
-            }
+            $table->string('tabla', 64);
+            $table->unsignedBigInteger('registro_id');
+            $table->enum('accion', ['INSERT', 'UPDATE']);
+            $table->json('valores_anteriores')->nullable();
+            $table->json('valores_nuevos')->nullable();
         });
     }
 

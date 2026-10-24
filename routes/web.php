@@ -16,7 +16,6 @@ Route::middleware('auth')->group(function () {
         ->whereIn('module', [
             'usuarios',
             'roles',
-            'permisos',
             'docentes',
             'estudiantes',
             'cursos',
@@ -26,8 +25,6 @@ Route::middleware('auth')->group(function () {
             'matriculas',
             'evaluaciones',
             'notas',
-            'sesiones',
-            'asistencia',
             'costos',
             'pagos',
         ])

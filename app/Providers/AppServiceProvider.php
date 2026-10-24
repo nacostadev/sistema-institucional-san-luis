@@ -2,23 +2,24 @@
 
 namespace App\Providers;
 
-use App\Models\Asistencia;
 use App\Models\Aula;
+use App\Models\CargoAdicional;
 use App\Models\Costo;
 use App\Models\Curso;
 use App\Models\Docente;
+use App\Models\DocenteHabilitacion;
 use App\Models\Estudiante;
 use App\Models\Evaluacion;
-use App\Models\HorarioProgramacion;
+use App\Models\Horario;
 use App\Models\Matricula;
 use App\Models\Nota;
 use App\Models\Pago;
+use App\Models\Periodo;
+use App\Models\Programa;
 use App\Models\Rol;
-use App\Models\RolVistaPermiso;
 use App\Models\Seccion;
-use App\Models\SesionClase;
 use App\Models\User;
-use App\Models\Vista;
+use App\Models\UsuarioRol;
 use App\Observers\AuditObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -38,23 +39,24 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         foreach ([
-            Asistencia::class,
             Aula::class,
+            CargoAdicional::class,
             Costo::class,
             Curso::class,
             Docente::class,
+            DocenteHabilitacion::class,
             Estudiante::class,
             Evaluacion::class,
-            HorarioProgramacion::class,
+            Horario::class,
             Matricula::class,
             Nota::class,
             Pago::class,
+            Periodo::class,
+            Programa::class,
             Rol::class,
-            RolVistaPermiso::class,
             Seccion::class,
-            SesionClase::class,
             User::class,
-            Vista::class,
+            UsuarioRol::class,
         ] as $model) {
             $model::observe(AuditObserver::class);
         }

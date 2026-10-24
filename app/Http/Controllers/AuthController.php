@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Services\IdentidadService;
 
 class AuthController extends Controller
 {
@@ -14,24 +15,22 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, IdentidadService $identidad)
     {
         $credentials = $request->validate([
             'correo' => ['required', 'email'],
             'clave' => ['required', 'string'],
         ]);
 
-        $user = User::where('correo', $credentials['correo'])->where('estado', 'activo')->first();
-        $passwordMatches = $user && (
-            (str_starts_with($user->clave, '$2y$') && Hash::check($credentials['clave'], $user->clave)) ||
-            hash_equals($user->clave, $credentials['clave'])
-        );
+        $correoHash = $identidad->hashCorreo($credentials['correo']);
+        $user = User::where('correo_hash', $correoHash)->where('estado', 'activo')->first();
+        $passwordMatches = $user && Hash::check($credentials['clave'], $user->password);
 
         if (!$passwordMatches) {
             return back()->withErrors(['correo' => 'El correo o la contraseña no son correctos.'])->withInput($request->only('correo'));
         }
 
-        Auth::login($user, $request->boolean('recordar'));
+        Auth::login($user);
         $request->session()->regenerate();
         return redirect()->intended(route('dashboard'));
     }

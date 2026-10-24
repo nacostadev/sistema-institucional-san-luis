@@ -9,8 +9,15 @@ class Evaluacion extends Model
     protected $table = 'evaluacion';
     protected $primaryKey = 'id_evaluacion';
     public $timestamps = false;
-    protected $fillable = ['seccion_id', 'nombre_evaluacion', 'peso_porcentaje'];
-    protected $casts = ['peso_porcentaje' => 'decimal:2'];
+    protected $fillable = ['seccion_id', 'titulo', 'ponderacion', 'fecha_evaluacion', 'estado'];
+
+    protected function casts(): array
+    {
+        return [
+            'ponderacion' => 'decimal:2',
+            'fecha_evaluacion' => 'date',
+        ];
+    }
     public function seccion()
     {
         return $this->belongsTo(Seccion::class, 'seccion_id', 'id_seccion');
